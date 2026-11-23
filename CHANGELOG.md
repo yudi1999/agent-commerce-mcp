@@ -2,6 +2,19 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
+## [1.3.0-PROD] - 2026-11-23
+
+### Ditambahkan
+- **Engine Masterpiece Motion Design (`scripts/render_masterpiece.py`):**
+  - Mengadopsi prinsip motion design senior dari suite `iart-ai/motion-skills` (`animation-principles`, `motion-art-direction`, `shot-composition`).
+  - Menghilangkan penyakit *acak-acakan* dan *visual overcrowding*:
+    - **One Focal Point per Shot:** 1 layar hanya memiliki 1 hero ide besar, bukan menumpuk 10 kotak sekaligus.
+    - **Asymmetric Snappy Easing:** Transisi masuk menggunakan `ease-out cubic` (`1 - (1-t)^3`) untuk entri cepat dan perlambatan halus berbobot.
+    - **Stagger 60-120ms:** Elemen pendukung muncul secara teratur setelah headline utama mendarat.
+    - **3-Layer Depth:** Ambient subtle grid, secondary surface card, primary giant typography.
+    - **Palette Minimalis:** Obsidian Slate Dark (`#0b0d11`) + Stripe/Apple clean typography.
+  - Offloaded ke cloud GitHub Actions (0% beban VPS).
+
 ## [1.2.0-PROD] - 2026-11-23
 
 ### Ditambahkan
