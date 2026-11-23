@@ -46,8 +46,8 @@ def main():
         proc = subprocess.Popen(ffmpeg_cmd, stdin=subprocess.PIPE)
         assert proc.stdin is not None
 
-        # Load HTML generator
-        from generate_html_scene import get_html_for_time
+        # Load HTML generator v3
+        from generate_html_scene_v3 import get_html_for_time
         with open("templates/base.html", "r") as f:
             base_html = f.read()
 
