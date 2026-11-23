@@ -2,6 +2,20 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
+## [1.2.0-PROD] - 2026-11-23
+
+### Ditambahkan
+- **Engine Video Animasi Edukasi MCP (`scripts/render_edukasi_video.py`):**
+  - Durasi 30 detik format vertikal 9:16 (1080x1920 @ 30 FPS).
+  - Mengimplementasikan standar kurikulum `iart-ai/motion-skills` & `motion-graphics-craft`.
+  - Pacing 4 tahap:
+    1. Detik 0-7: Perubahan perilaku konsumen (tidak browsing manual lagi, beralih ke agen AI).
+    2. Detik 7-14: Masalah web tradisional (AI 'buta' melihat banner & button, butuh data mesin).
+    3. Detik 14-22: Analogi awam MCP sebagai "colokan USB langsung dari toko ke otak AI", notifikasi masuk WhatsApp kasir toko tanpa potongan 20%.
+    4. Detik 22-30: Penawaran jasa instalasi terima beres untuk UMKM lokal.
+  - Fitur karaoke subtitles scroll-stopping dengan safe area band (terhindar dari UI TikTok/Reels).
+  - Offloaded ke cloud runner GitHub Actions (0% beban VPS).
+
 ## [1.1.0-PROD] - 2026-11-23
 
 ### Ditambahkan
