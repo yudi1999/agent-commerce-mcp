@@ -2,6 +2,20 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
+## [1.1.0-PROD] - 2026-11-23
+
+### Ditambahkan
+- **Engine UI Motion & Video Renderer (`scripts/render_video.py`):**
+  - Mengimplementasikan standar skill `programmatic-ui-motion-video` dan `antislop-ui`.
+  - Format 9:16 vertical (1080x1920 @ 30 FPS, 24 detik durasi).
+  - Screen Studio camera (virtual zoom & pan halus).
+  - Alur 4 scene: Order AI -> Protokol MCP -> Pembayaran QRIS -> Notifikasi WhatsApp Toko & Value Proposition UMKM.
+- **Synthesizer Efek Suara Haptik (`scripts/generate_sfx.py`):**
+  - Efek audio tactile tap, WhatsApp notification chime, dan chord QRIS success murni matematika gelombang tanpa asset bajakan.
+- **Offload Rendering via GitHub Actions (`.github/workflows/render-video.yml`):**
+  - Seluruh beban rendering video grafis dialihkan ke server GitHub Actions (bebas beban VPS).
+  - Otomatis upload artefak video MP4 siap unduh.
+
 ## [1.0.0-PROD] - 2026-11-23
 
 ### Ditambahkan
