@@ -2,6 +2,18 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
+## [2.4.0-PROD] - 2026-11-23
+
+### Ditambahkan (Arsitektur Universal Open Web MCP Runner)
+- **Spesifikasi & Blueprint Arsitektur Sistem (`BLUEPRINT_ARSITEKTUR.md`):**
+  - Pemetaan solusi 3-Layer untuk mengatasi keterbatasan sandbox OpenAI/Gemini web:
+    1. **Client Layer:** Universal Open Web Runner di browser HP/Laptop konsumen (bebas sandbox).
+    2. **Core Layer:** AI Orchestrator (9Router) + MCP Registry Hub + Universal MCP Bridge (FastAPI :3890).
+    3. **Merchant Layer:** Adapter POS Toko + LuxWA WhatsApp Kasir Realtime (:3085).
+- **Diagram Arsitektur Interaktif Standar Industri (`agentic-commerce.html`):**
+  - Divalidasi dan di-deliver via skill `archify` (9/9 automated composition checks pass).
+  - Deployed live di https://social.luxcyber.my.id/dl/arsitektur-agentic-commerce.html
+
 ## [2.3.0-PROD] - 2026-11-23
 
 ### Ditambahkan (Super Dynamic Motion Graphics Suite)
