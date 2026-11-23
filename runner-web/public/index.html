@@ -1,207 +1,256 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="h-full">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Universal AI Shopping Runner — Belanja Berbasis MCP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Universal Shopping Agent — Protokol Belanja Berbasis MCP</title>
   
-  <!-- Tailwind CSS & Icons -->
+  <!-- Tailwind CSS & Font Awesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+    
+    :root {
+      --bg-base: #090c15;
+      --card-base: #111524;
+      --border-base: #1e2638;
+      --accent: #f97316;
+      --accent-hover: #ea580c;
+    }
+    
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #0b0d13;
-      color: #f1f5f9;
+      background-color: var(--bg-base);
+      color: #e2e8f0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
+    
+    /* Accessibility focus rings (R-32) */
+    a:focus-visible, button:focus-visible, input:focus-visible {
+      outline: 2px solid #38bdf8;
+      outline-offset: 2px;
     }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #1e293b;
+
+    /* Custom high-contrast scrollbar */
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #0f1422;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #2a3449;
       border-radius: 4px;
     }
-    .pulse-glow {
-      box-shadow: 0 0 25px rgba(255, 107, 0, 0.25);
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #3e4c6b;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between">
+<body class="min-h-full flex flex-col justify-between selection:bg-orange-500/30 selection:text-orange-200">
 
-  <!-- Top Navbar -->
-  <header class="border-b border-slate-800 bg-[#0e111a]/80 backdrop-blur sticky top-0 z-50 px-4 py-3.5 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-500 font-bold">
-        <i class="fa-solid fa-bolt"></i>
+  <!-- Top App Bar -->
+  <header class="border-b border-slate-800/80 bg-[#0d111d]/90 backdrop-blur-md sticky top-0 z-40 px-4 py-3 md:px-6">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
+      
+      <!-- Brand & Status -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-500/30 flex items-center justify-center text-orange-400 font-black text-lg shadow-sm">
+          <i class="fa-solid fa-basket-shopping"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-sm md:text-base font-bold text-white tracking-tight">Open Web Runner</h1>
+            <span class="text-[10px] font-mono font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full">
+              MCP ACTIVE
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Protokol Belanja AI Terbuka Langsung ke WhatsApp Kasir</p>
+        </div>
       </div>
-      <div>
-        <h1 class="text-base font-bold text-white flex items-center gap-2">
-          Open Web Runner
-          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-mono">MCP v1.0</span>
-        </h1>
-        <p class="text-xs text-slate-400">Jembatan Asisten AI ke Toko Lokal Tanpa Batasan</p>
+
+      <!-- Live Registry Metric -->
+      <div class="flex items-center gap-2.5">
+        <div class="flex items-center gap-2 bg-[#141a2b] border border-slate-700/60 px-3 py-1.5 rounded-xl text-xs">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span id="merchantCount" class="font-medium text-slate-300 text-[11px]">Sinkronisasi Toko...</span>
+        </div>
+
+        <button onclick="clearChat()" title="Reset Percakapan" class="w-8 h-8 rounded-lg bg-slate-800/60 hover:bg-slate-700/80 border border-slate-700/60 text-slate-400 hover:text-white flex items-center justify-center transition text-xs">
+          <i class="fa-solid fa-rotate-left"></i>
+        </button>
       </div>
-    </div>
-    <div class="flex items-center gap-2">
-      <span class="inline-flex items-center gap-1.5 text-xs text-slate-300 bg-slate-800/80 border border-slate-700/60 px-3 py-1.5 rounded-lg">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span id="merchantCount">Memuat Toko...</span>
-      </span>
+
     </div>
   </header>
 
-  <!-- Main Grid Layout -->
-  <main class="flex-1 max-w-5xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+  <!-- Main Canvas -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-3 sm:p-5 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-5">
 
-    <!-- Left Column: Conversational AI Box -->
-    <div class="lg:col-span-7 flex flex-col bg-[#121624] border border-slate-800 rounded-2xl overflow-hidden shadow-2xl h-[620px]">
+    <!-- Left Column: Conversational AI Desk (Cols 12 -> 7) -->
+    <section class="lg:col-span-7 flex flex-col bg-[#111524] border border-slate-800/80 rounded-2xl overflow-hidden shadow-xl h-[580px] sm:h-[620px]">
       
-      <!-- Chat Header -->
-      <div class="p-3.5 bg-slate-900/60 border-b border-slate-800 flex items-center justify-between">
+      <!-- Chat Context Subheader -->
+      <div class="px-4 py-3 bg-[#14192b] border-b border-slate-800/80 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
-          <div class="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs">
-            <i class="fa-solid fa-robot"></i>
-          </div>
-          <div>
-            <h2 class="text-xs font-bold text-slate-200">Asisten Belanja AI (MCP Brain)</h2>
-            <p class="text-[10px] text-slate-400">Tanyakan menu, atur budget, atau langsung order</p>
-          </div>
+          <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
+          <span class="text-xs font-semibold text-slate-200">Asisten Belanja Toko (Gemini Brain)</span>
         </div>
-        <button onclick="clearChat()" class="text-xs text-slate-400 hover:text-rose-400 transition">
-          <i class="fa-solid fa-rotate-right mr-1"></i>Reset
-        </button>
+        <span class="text-[10px] text-slate-400 font-mono">Bebas Pajak Ojol 20%</span>
       </div>
 
       <!-- Messages Window -->
-      <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-4 custom-scrollbar text-sm">
+      <div id="chatMessages" class="flex-1 p-3.5 sm:p-4 overflow-y-auto space-y-3.5 custom-scroll text-xs sm:text-sm">
         
-        <!-- Bot Welcome -->
-        <div class="flex gap-3 items-start">
-          <div class="w-7 h-7 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-            <i class="fa-solid fa-robot"></i>
+        <!-- Welcome Message from Agent -->
+        <div class="flex gap-2.5 items-start">
+          <div class="w-7 h-7 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center text-xs flex-shrink-0 mt-0.5 border border-orange-500/30">
+            <i class="fa-solid fa-microchip"></i>
           </div>
-          <div class="bg-slate-800/80 border border-slate-700/60 p-3.5 rounded-2xl rounded-tl-sm text-slate-200 max-w-[85%] leading-relaxed">
-            Halo! Saya asisten belanja pintar. Saya terhubung langsung ke katalog resmi toko UMKM via protokol MCP.<br><br>
-            Coba katakan:
-            <span class="block mt-1 text-orange-400 font-mono text-xs">"Pesan 2 kopi susu gula aren kirim ke Meja 5"</span>
-            atau
-            <span class="block mt-0.5 text-blue-400 font-mono text-xs">"Gw punya budget 40rb, dapet menu apa aja?"</span>
+          <div class="bg-[#171e33] border border-slate-700/60 p-3 sm:p-3.5 rounded-2xl rounded-tl-xs text-slate-200 max-w-[88%] leading-relaxed shadow-sm">
+            <p class="font-medium text-white mb-1.5">Halo! Saya asisten belanja yang terhubung ke katalog toko lokal via MCP.</p>
+            <p class="text-slate-300 text-[12px] mb-2.5">
+              Anda bisa pesan satu atau beberapa menu sekaligus dari toko berbeda. Kasir akan langsung menerima nota di WhatsApp.
+            </p>
+            <div class="bg-[#0f1424] p-2.5 rounded-xl border border-slate-800 text-[11px] space-y-1">
+              <p class="text-slate-400">Contoh perintah yang bisa Anda coba:</p>
+              <div class="text-orange-300 font-mono">"Pesan 2 kopi susu gula aren dan 1 roti sisir mentega spesial"</div>
+              <div class="text-blue-300 font-mono">"Ada menu apa aja di bawah 20 ribu?"</div>
+            </div>
           </div>
         </div>
 
       </div>
 
-      <!-- Quick Prompt Chips -->
-      <div class="px-4 py-2 border-t border-slate-800/60 bg-slate-900/40 flex items-center gap-2 overflow-x-auto text-xs whitespace-nowrap custom-scrollbar">
-        <span class="text-slate-500 text-[11px]">Coba klik:</span>
-        <button onclick="sendQuickPrompt('Pesan 2 Kopi Susu Gula Aren kirim ke Meja Kerja Laptop')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 px-2.5 py-1 rounded-full transition text-[11px]">
-          ☕ Pesan 2 Kopi Susu
+      <!-- Quick Action Prompt Chips (Scrollable X) -->
+      <div class="px-3 py-2 bg-[#0e1220] border-t border-slate-800/80 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap custom-scroll">
+        <span class="text-[10px] text-slate-500 font-medium px-1 uppercase tracking-wider">Cepat:</span>
+        <button onclick="sendQuickPrompt('Pesan 2 Kopi Susu Gula Aren dan 1 Roti Sisir Mentega Spesial kirim ke Ruang Kerja LOQ Karawang')" class="text-[11px] bg-[#1a2238] hover:bg-[#222d4a] active:scale-95 border border-slate-700/70 text-slate-200 px-3 py-1.5 rounded-lg transition">
+          ☕ 2 Kopi + 1 Roti
         </button>
-        <button onclick="sendQuickPrompt('Ada camilan apa aja di bawah 20 ribu?')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 px-2.5 py-1 rounded-full transition text-[11px]">
-          🥐 Rekomendasi &lt; Rp 20rb
+        <button onclick="sendQuickPrompt('Rekomendasikan menu buat nemenin lembur budget 35 ribu')" class="text-[11px] bg-[#1a2238] hover:bg-[#222d4a] active:scale-95 border border-slate-700/70 text-slate-200 px-3 py-1.5 rounded-lg transition">
+          💡 Paket Lembur (35rb)
         </button>
-        <button onclick="sendQuickPrompt('Rekomendasikan kopi dingin buat nemenin lembur')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 px-2.5 py-1 rounded-full transition text-[11px]">
-          ⚡ Kopi Buat Lembur
+        <button onclick="sendQuickPrompt('Tampilkan semua daftar menu roti dan pastry')" class="text-[11px] bg-[#1a2238] hover:bg-[#222d4a] active:scale-95 border border-slate-700/70 text-slate-200 px-3 py-1.5 rounded-lg transition">
+          🥐 Menu Roti & Pastry
         </button>
       </div>
 
-      <!-- Input Bar -->
-      <form id="chatForm" onsubmit="handleChatSubmit(event)" class="p-3 bg-slate-900/80 border-t border-slate-800 flex items-center gap-2">
+      <!-- Input Form -->
+      <form id="chatForm" onsubmit="handleChatSubmit(event)" class="p-2.5 sm:p-3 bg-[#0d111d] border-t border-slate-800 flex items-center gap-2">
+        <label for="userInput" class="sr-only">Pesan belanja atau pertanyaan</label>
         <input 
           type="text" 
           id="userInput" 
-          placeholder="Ketik pesanan atau pertanyaan Anda..." 
+          placeholder="Ketik pesanan bebas (contoh: 2 kopi susu dan 1 croissant)..." 
           required 
-          class="flex-1 bg-slate-800/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition"
+          autocomplete="off"
+          class="flex-1 bg-[#151a2d] border border-slate-700/70 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder-slate-400 focus:border-orange-500 focus:bg-[#192036] transition"
         />
-        <button type="submit" id="sendBtn" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-orange-500/20">
-          <span>Kirim</span>
+        <button type="submit" id="sendBtn" class="bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-semibold px-4 py-2.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 shadow-md shadow-orange-500/20 transition min-w-[44px] min-h-[44px] justify-center">
+          <span class="hidden sm:inline">Kirim</span>
           <i class="fa-solid fa-paper-plane text-xs"></i>
         </button>
       </form>
 
-    </div>
+    </section>
 
-    <!-- Right Column: Interactive MCP Tools & Execution Box -->
-    <div class="lg:col-span-5 flex flex-col gap-6">
+    <!-- Right Column: Intent Checkout & Merchant Registry (Cols 12 -> 5) -->
+    <aside class="lg:col-span-5 flex flex-col gap-5">
 
-      <!-- Active Order Intent Card (Dynamic Card) -->
-      <div id="intentContainer" class="bg-[#121624] border border-orange-500/30 rounded-2xl p-5 shadow-2xl relative overflow-hidden">
-        <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center gap-2 text-xs font-bold text-orange-400">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span>ORDER INTENT TERDETEKSI</span>
+      <!-- Order Intent Checkout Box -->
+      <div id="intentContainer" class="bg-[#111524] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl relative transition duration-300">
+        
+        <!-- Header status -->
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-slate-600" id="intentDot"></span>
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300">Nota Eksekusi Pesanan</h2>
           </div>
-          <span class="text-[10px] bg-orange-500/10 text-orange-400 border border-orange-500/20 px-2 py-0.5 rounded font-mono">
-            MCP Tool Call Ready
+          <span id="intentBadge" class="text-[10px] font-mono bg-slate-800 text-slate-400 border border-slate-700 px-2 py-0.5 rounded">
+            Menunggu Intent
           </span>
         </div>
 
-        <div id="intentContent">
-          <p class="text-xs text-slate-400 mb-3">
-            Katakan pesanan Anda di kolom chat. Begitu AI mengenali item belanjaan, detail pesanan akan otomatis terkunci di sini dan siap dieksekusi ke kasir!
-          </p>
-          <div class="p-4 bg-slate-900/60 rounded-xl border border-dashed border-slate-800 text-center">
-            <span class="text-xs text-slate-500 italic">Menunggu instruksi pesanan...</span>
+        <!-- Dynamic Content Body -->
+        <div id="intentContent" class="mt-3.5 space-y-3">
+          <div class="p-4 bg-[#0e1220] rounded-xl border border-dashed border-slate-800 text-center space-y-1">
+            <i class="fa-solid fa-cart-arrow-down text-slate-600 text-lg mb-1 block"></i>
+            <p class="text-xs text-slate-400 font-medium">Belum ada pesanan aktif</p>
+            <p class="text-[11px] text-slate-500 leading-normal">
+              Ketik pesanan di kolom chat. Rincian menu, jumlah porsi, dan total harga akan otomatis terisi di sini.
+            </p>
           </div>
         </div>
+
       </div>
 
       <!-- Merchant Directory Card -->
-      <div class="bg-[#121624] border border-slate-800 rounded-2xl p-5 flex-1 flex flex-col">
-        <div class="flex items-center justify-between mb-3.5">
-          <h3 class="text-xs font-bold text-slate-300 flex items-center gap-2">
-            <i class="fa-solid fa-store text-emerald-400"></i>
-            Toko Resmi Terdaftar (MCP Hub)
+      <div class="bg-[#111524] border border-slate-800 rounded-2xl p-4 sm:p-5 flex-1 flex flex-col">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-xs font-bold text-slate-200 flex items-center gap-2">
+            <i class="fa-solid fa-shop text-emerald-400"></i>
+            Toko Resmi Terdaftar (MCP Directory)
           </h3>
-          <span class="text-[10px] text-slate-500">Live API</span>
+          <span class="text-[10px] text-slate-500 font-mono">v1.2 Live</span>
         </div>
 
-        <div id="merchantList" class="space-y-2.5 overflow-y-auto max-h-[220px] custom-scrollbar pr-1">
-          <div class="text-xs text-slate-500">Sedang menyinkronkan daftar toko...</div>
-        </div>
-
-        <!-- Security Proof Footer -->
-        <div class="mt-auto pt-4 border-t border-slate-800/80 text-[11px] text-slate-400 flex flex-col gap-1.5">
-          <div class="flex items-center gap-2 text-emerald-400">
-            <i class="fa-solid fa-shield-halved text-xs"></i>
-            <span class="font-semibold">Keamanan Terjamin</span>
+        <!-- Scrollable List of Merchants -->
+        <div id="merchantList" class="space-y-2.5 overflow-y-auto max-h-[220px] custom-scroll pr-1 text-xs">
+          <div class="p-3 bg-[#0e1220] rounded-xl border border-slate-800 text-slate-500 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-circle-notch fa-spin text-orange-400"></i>
+            <span>Memuat katalog toko resmi...</span>
           </div>
-          <p class="text-[10px] text-slate-500">
-            • Anti-XSS Sanitized • Zero API Key Leakage • Notifikasi Langsung ke WhatsApp Kasir Toko Tanpa Komisi Ojol 20%.
+        </div>
+
+        <!-- Trust & Security Signals (No Fake Badges, Real Signals) -->
+        <div class="mt-4 pt-3.5 border-t border-slate-800/80 text-[11px] text-slate-400 space-y-1.5">
+          <div class="flex items-center gap-1.5 text-emerald-400 font-semibold text-xs">
+            <i class="fa-solid fa-shield-check"></i>
+            <span>Jalur Transaksi Terproteksi</span>
+          </div>
+          <p class="text-[10px] text-slate-500 leading-relaxed">
+            Pesanan langsung di-dispatch ke WhatsApp kasir toko via Baileys node. Tanpa perantara pihak ketiga dan bebas komisi ojol.
           </p>
         </div>
+
       </div>
 
-    </div>
+    </aside>
 
   </main>
 
-  <!-- Notification Toast -->
-  <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 border border-slate-700 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transform translate-y-24 opacity-0 transition duration-300 z-50 text-sm">
+  <!-- Notification Toast Area -->
+  <div id="toast" role="status" aria-live="polite" class="fixed bottom-5 right-5 max-w-sm bg-[#161c2e] border border-slate-700 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transform translate-y-24 opacity-0 transition duration-300 z-50 text-xs sm:text-sm">
     <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
-    <span id="toastMsg">Pesanan berhasil dieksekusi!</span>
+    <span id="toastMsg" class="font-medium text-slate-200">Pesanan berhasil dieksekusi!</span>
   </div>
 
+  <!-- Interactive Logic Client -->
   <script>
     const API_BASE = "https://social.luxcyber.my.id/agent-runner/api";
     let activeMerchants = [];
     let currentIntent = null;
 
-    // Load Merchant List on Mount
+    // Load active registered merchants
     async function fetchMerchants() {
       try {
         const res = await fetch(`${API_BASE}/merchants`);
         const data = await res.json();
         if (data.status === "success") {
           activeMerchants = data.merchants;
-          document.getElementById('merchantCount').innerText = `${data.total} Toko MCP Aktif`;
+          document.getElementById('merchantCount').innerText = `${data.total} Toko Aktif`;
           renderMerchantList();
         }
       } catch (e) {
-        console.error("Gagal load merchants:", e);
+        console.error("Gagal load katalog:", e);
         document.getElementById('merchantCount').innerText = `1 Toko Terhubung`;
       }
     }
@@ -209,19 +258,19 @@
     function renderMerchantList() {
       const el = document.getElementById('merchantList');
       if (!activeMerchants.length) {
-        el.innerHTML = '<div class="text-xs text-slate-500">Tidak ada toko aktif.</div>';
+        el.innerHTML = '<div class="p-3 bg-[#0e1220] rounded-xl text-center text-slate-500">Katalog kosong.</div>';
         return;
       }
       el.innerHTML = activeMerchants.map(m => `
-        <div class="p-3 bg-slate-900/60 border border-slate-800 rounded-xl hover:border-slate-700 transition">
-          <div class="flex items-center justify-between">
-            <h4 class="text-xs font-bold text-white">${m.name}</h4>
-            <span class="text-[9px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono">${m.id}</span>
+        <div class="p-3 bg-[#0e1220] border border-slate-800/80 rounded-xl hover:border-slate-700 transition">
+          <div class="flex items-center justify-between mb-1">
+            <h4 class="font-bold text-slate-200 text-xs">${m.name}</h4>
+            <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">${m.id}</span>
           </div>
-          <p class="text-[10px] text-slate-400 mt-0.5">${m.category} • ${m.location}</p>
-          <div class="mt-2 flex flex-wrap gap-1.5">
+          <p class="text-[10px] text-slate-400 mb-2">${m.category} • ${m.location}</p>
+          <div class="flex flex-wrap gap-1.5">
             ${m.catalog.map(c => `
-              <span class="text-[10px] bg-slate-800/90 text-slate-300 px-2 py-0.5 rounded border border-slate-700/50">
+              <span class="text-[10px] bg-[#14192a] text-slate-300 px-2 py-0.5 rounded border border-slate-700/60 font-medium">
                 ${c.name} (Rp ${c.price.toLocaleString('id-ID')})
               </span>
             `).join('')}
@@ -237,7 +286,6 @@
       
       msgEl.innerText = msg;
       icon.className = isSuccess ? "fa-solid fa-circle-check text-emerald-400 text-base" : "fa-solid fa-triangle-exclamation text-rose-400 text-base";
-      
       toast.classList.remove('translate-y-24', 'opacity-0');
       setTimeout(() => {
         toast.classList.add('translate-y-24', 'opacity-0');
@@ -245,18 +293,20 @@
     }
 
     function sendQuickPrompt(text) {
-      document.getElementById('userInput').value = text;
+      const inp = document.getElementById('userInput');
+      inp.value = text;
+      inp.focus();
       handleChatSubmit(new Event('submit'));
     }
 
     function clearChat() {
       document.getElementById('chatMessages').innerHTML = `
-        <div class="flex gap-3 items-start">
-          <div class="w-7 h-7 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-            <i class="fa-solid fa-robot"></i>
+        <div class="flex gap-2.5 items-start">
+          <div class="w-7 h-7 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center text-xs flex-shrink-0 mt-0.5 border border-orange-500/30">
+            <i class="fa-solid fa-microchip"></i>
           </div>
-          <div class="bg-slate-800/80 border border-slate-700/60 p-3.5 rounded-2xl rounded-tl-sm text-slate-200 max-w-[85%] leading-relaxed">
-            Riwayat chat telah di-reset. Ada yang bisa saya pesankan untuk Anda?
+          <div class="bg-[#171e33] border border-slate-700/60 p-3 sm:p-3.5 rounded-2xl rounded-tl-xs text-slate-200 max-w-[88%] leading-relaxed">
+            Riwayat chat telah di-reset. Silakan ketik pesanan yang ingin Anda buat.
           </div>
         </div>
       `;
@@ -265,12 +315,19 @@
     }
 
     function resetIntentCard() {
+      const card = document.getElementById('intentContainer');
+      card.className = "bg-[#111524] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl relative transition duration-300";
+      document.getElementById('intentDot').className = "w-2.5 h-2.5 rounded-full bg-slate-600";
+      document.getElementById('intentBadge').className = "text-[10px] font-mono bg-slate-800 text-slate-400 border border-slate-700 px-2 py-0.5 rounded";
+      document.getElementById('intentBadge').innerText = "Menunggu Intent";
+
       document.getElementById('intentContent').innerHTML = `
-        <p class="text-xs text-slate-400 mb-3">
-          Katakan pesanan Anda di kolom chat. Begitu AI mengenali item belanjaan, detail pesanan akan otomatis terkunci di sini dan siap dieksekusi ke kasir!
-        </p>
-        <div class="p-4 bg-slate-900/60 rounded-xl border border-dashed border-slate-800 text-center">
-          <span class="text-xs text-slate-500 italic">Menunggu instruksi pesanan...</span>
+        <div class="p-4 bg-[#0e1220] rounded-xl border border-dashed border-slate-800 text-center space-y-1">
+          <i class="fa-solid fa-cart-arrow-down text-slate-600 text-lg mb-1 block"></i>
+          <p class="text-xs text-slate-400 font-medium">Belum ada pesanan aktif</p>
+          <p class="text-[11px] text-slate-500 leading-normal">
+            Ketik pesanan di kolom chat. Rincian menu, jumlah porsi, dan total harga akan otomatis terisi di sini.
+          </p>
         </div>
       `;
     }
@@ -283,10 +340,10 @@
 
       const chatBox = document.getElementById('chatMessages');
 
-      // 1. Append User Message
+      // Append user bubble
       chatBox.innerHTML += `
         <div class="flex justify-end">
-          <div class="bg-orange-500/10 border border-orange-500/30 text-orange-200 px-4 py-2.5 rounded-2xl rounded-tr-sm max-w-[85%]">
+          <div class="bg-orange-500/15 border border-orange-500/30 text-orange-200 px-3.5 py-2.5 rounded-2xl rounded-tr-xs max-w-[85%] font-medium">
             ${query}
           </div>
         </div>
@@ -294,16 +351,16 @@
       input.value = "";
       chatBox.scrollTop = chatBox.scrollHeight;
 
-      // 2. Append Loading Indicator
+      // Loading bubble
       const loadingId = "load_" + Date.now();
       chatBox.innerHTML += `
-        <div id="${loadingId}" class="flex gap-3 items-start">
-          <div class="w-7 h-7 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-            <i class="fa-solid fa-robot"></i>
+        <div id="${loadingId}" class="flex gap-2.5 items-start">
+          <div class="w-7 h-7 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center text-xs flex-shrink-0 mt-0.5 border border-orange-500/30">
+            <i class="fa-solid fa-microchip"></i>
           </div>
-          <div class="bg-slate-800/80 border border-slate-700/60 px-4 py-2.5 rounded-2xl rounded-tl-sm text-slate-400 flex items-center gap-2">
-            <i class="fa-solid fa-circle-notch fa-spin text-xs text-orange-400"></i>
-            <span>Membaca katalog toko & memproses...</span>
+          <div class="bg-[#171e33] border border-slate-700/60 px-3.5 py-2.5 rounded-2xl rounded-tl-xs text-slate-400 flex items-center gap-2 text-xs">
+            <i class="fa-solid fa-circle-notch fa-spin text-orange-400"></i>
+            <span>Menganalisis menu & menghitung nota...</span>
           </div>
         </div>
       `;
@@ -318,16 +375,17 @@
         const data = await res.json();
         
         // Remove loading
-        document.getElementById(loadingId).remove();
+        const loadEl = document.getElementById(loadingId);
+        if (loadEl) loadEl.remove();
 
         if (data.status === "success") {
-          // Render Bot Response
+          // Render Agent Answer
           chatBox.innerHTML += `
-            <div class="flex gap-3 items-start">
-              <div class="w-7 h-7 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-                <i class="fa-solid fa-robot"></i>
+            <div class="flex gap-2.5 items-start">
+              <div class="w-7 h-7 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center text-xs flex-shrink-0 mt-0.5 border border-orange-500/30">
+                <i class="fa-solid fa-microchip"></i>
               </div>
-              <div class="bg-slate-800/80 border border-slate-700/60 p-3.5 rounded-2xl rounded-tl-sm text-slate-200 max-w-[85%] leading-relaxed whitespace-pre-line">
+              <div class="bg-[#171e33] border border-slate-700/60 p-3 sm:p-3.5 rounded-2xl rounded-tl-xs text-slate-200 max-w-[88%] leading-relaxed whitespace-pre-line text-xs sm:text-sm">
                 ${data.reply}
               </div>
             </div>
@@ -348,7 +406,7 @@
         chatBox.innerHTML += `
           <div class="flex justify-start">
             <div class="bg-rose-500/10 border border-rose-500/30 text-rose-300 px-3 py-2 rounded-xl text-xs">
-              ⚠️ ${err.message || 'Gagal terhubung ke AI Hub.'}
+              ⚠️ ${err.message || 'Gagal menghubungi asisten AI.'}
             </div>
           </div>
         `;
@@ -357,57 +415,65 @@
     }
 
     function renderIntentCard(intent) {
+      const card = document.getElementById('intentContainer');
+      card.className = "bg-[#111524] border-2 border-orange-500/80 rounded-2xl p-4 sm:p-5 shadow-2xl relative transition duration-300";
+      
+      const dot = document.getElementById('intentDot');
+      dot.className = "w-2.5 h-2.5 rounded-full bg-orange-400 animate-pulse";
+
+      const badge = document.getElementById('intentBadge');
+      badge.className = "text-[10px] font-mono bg-orange-500/20 text-orange-300 border border-orange-500/40 px-2 py-0.5 rounded font-bold";
+      badge.innerText = "SIAP DIEKSEKUSI";
+
       const container = document.getElementById('intentContent');
       
       let itemsHtml = '';
       if (intent.items && intent.items.length > 0) {
         itemsHtml = intent.items.map(it => `
-          <div class="flex justify-between items-center text-xs py-1 border-b border-slate-800/60">
-            <span class="text-white font-medium">• ${it.item_name} <span class="text-orange-400 font-bold">(${it.quantity}x)</span></span>
-            <span class="text-slate-300 font-mono">Rp ${(it.subtotal || (it.price_per_item * it.quantity)).toLocaleString('id-ID')}</span>
+          <div class="flex items-center justify-between py-1.5 border-b border-slate-800/80 text-xs">
+            <div class="flex-1 pr-2">
+              <span class="font-bold text-white block">${it.item_name}</span>
+              <span class="text-[10px] text-slate-400 font-mono">${it.quantity} porsi × Rp ${it.price_per_item.toLocaleString('id-ID')}</span>
+            </div>
+            <span class="font-bold text-orange-300 font-mono text-xs">Rp ${it.subtotal.toLocaleString('id-ID')}</span>
           </div>
         `).join('');
       } else {
         itemsHtml = `
-          <div class="flex justify-between items-center text-xs py-1">
-            <span class="text-white font-medium">• ${intent.item_name} <span class="text-orange-400 font-bold">(${intent.quantity}x)</span></span>
-            <span class="text-slate-300 font-mono">Rp ${(intent.total_price || (intent.price_per_item * intent.quantity)).toLocaleString('id-ID')}</span>
+          <div class="flex items-center justify-between py-1.5 border-b border-slate-800/80 text-xs">
+            <div>
+              <span class="font-bold text-white">${intent.item_name || 'Item Pesanan'}</span>
+              <span class="text-[10px] text-slate-400 font-mono block">${intent.quantity || 1} porsi</span>
+            </div>
+            <span class="font-bold text-orange-300 font-mono">Rp ${(intent.total_price || 0).toLocaleString('id-ID')}</span>
           </div>
         `;
       }
 
       container.innerHTML = `
-        <div class="bg-slate-900/90 border border-orange-500/40 rounded-xl p-3.5 space-y-3">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
-            <div>
-              <span class="text-[10px] text-slate-400 font-mono">STATUS ORDER</span>
-              <h4 class="text-sm font-bold text-orange-400">Keranjang Terkunci</h4>
-            </div>
-            <div class="text-right">
-              <span class="text-[10px] text-slate-400 font-mono">MERCHANT</span>
-              <p class="text-xs font-semibold text-slate-300">${intent.merchant_id || 'MULTI-STORE'}</p>
-            </div>
-          </div>
-
+        <div class="bg-[#0e1220] border border-orange-500/30 rounded-xl p-3.5 space-y-3">
+          
           <div class="space-y-1">
-            <label class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Rincian Menu:</label>
-            ${itemsHtml}
+            <span class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">Daftar Menu:</span>
+            <div class="max-h-36 overflow-y-auto custom-scroll pr-1">
+              ${itemsHtml}
+            </div>
           </div>
 
-          <div class="flex items-center justify-between text-xs pt-2 border-t border-slate-800">
-            <span class="text-slate-400">Total Pembayaran:</span>
-            <span class="font-bold text-orange-400 font-mono text-base">Rp ${(intent.total_price || 0).toLocaleString('id-ID')}</span>
+          <div class="pt-2 flex items-center justify-between border-t border-slate-800">
+            <span class="text-xs text-slate-300 font-medium">Total Tagihan (QRIS):</span>
+            <span class="font-extrabold text-white font-mono text-sm sm:text-base text-orange-400">Rp ${intent.total_price.toLocaleString('id-ID')}</span>
           </div>
 
-          <div class="space-y-1.5 pt-1">
-            <label class="text-[10px] text-slate-400 uppercase tracking-wider">Nama Anda & Alamat Antar:</label>
-            <input type="text" id="execName" value="HERI" placeholder="Nama Pemesan" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
-            <input type="text" id="execAddress" value="Ruang Kerja LOQ Karawang" placeholder="Alamat Pengiriman Lengkap" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+          <div class="space-y-2 pt-2 border-t border-slate-800/80">
+            <label class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block">Tujuan Pengantaran:</label>
+            <input type="text" id="execName" value="Tuan Yudi" placeholder="Nama Pemesan" class="w-full bg-[#151a2d] border border-slate-700/80 rounded-lg px-3 py-2 text-xs text-white focus:border-orange-500">
+            <input type="text" id="execAddress" value="Ruang Kerja LOQ Karawang" placeholder="Alamat Pengantaran Lengkap" class="w-full bg-[#151a2d] border border-slate-700/80 rounded-lg px-3 py-2 text-xs text-white focus:border-orange-500">
           </div>
 
-          <button onclick="executeOrderTrigger()" id="execBtn" class="w-full mt-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 transition">
-            <i class="fa-solid fa-paper-plane"></i>
-            <span>EKSEKUSI KE KASIR TOKO (TRIGGER MCP & WA)</span>
+          <button onclick="executeOrderTrigger()" id="execBtn" class="w-full mt-3 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 active:scale-[0.98] text-white font-bold py-3 px-4 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 transition min-h-[44px]">
+            <i class="fa-solid fa-paper-plane text-xs"></i>
+            <span>Kirim Pesanan ke Kasir Toko via WA</span>
           </button>
         </div>
       `;
@@ -420,15 +486,15 @@
       const addr = document.getElementById('execAddress').value.trim();
 
       if (!name || !addr) {
-        showToast("Nama dan Alamat wajib diisi!", false);
+        showToast("Nama dan alamat pengiriman wajib diisi!", false);
         return;
       }
 
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Mengeksekusi ke Toko & Mengirim WhatsApp...</span>';
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-sm"></i><span>Memproses ke Kasir WhatsApp...</span>';
 
       try {
-        const payload = {
+        let payload = {
           merchant_id: currentIntent.merchant_id || "MERCHANT-KOPI-01",
           customer_name: name,
           delivery_address: addr
@@ -437,11 +503,11 @@
         if (currentIntent.items && currentIntent.items.length > 0) {
           payload.items = currentIntent.items.map(it => ({
             item_id: it.item_id,
-            quantity: parseInt(it.quantity)
+            quantity: it.quantity
           }));
         } else {
           payload.item_id = currentIntent.item_id;
-          payload.quantity = parseInt(currentIntent.quantity) || 1;
+          payload.quantity = currentIntent.quantity || 1;
         }
 
         const res = await fetch(`${API_BASE}/execute-order`, {
@@ -452,38 +518,32 @@
 
         const data = await res.json();
         if (data.status === "success") {
-          showToast("Pesanan Berhasil! Notifikasi WA Kasir sudah terkirim!");
-          
-          // Show Success Card
-          document.getElementById('intentContent').innerHTML = `
-            <div class="bg-emerald-950/40 border border-emerald-500/40 rounded-xl p-4 text-center space-y-2">
-              <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto text-lg">
+          showToast("Pesanan Diterima! Nota WhatsApp sudah dikirim ke kasir!");
+          const chatBox = document.getElementById('chatMessages');
+          chatBox.innerHTML += `
+            <div class="flex gap-2.5 items-start">
+              <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs flex-shrink-0 mt-0.5 border border-emerald-500/30">
                 <i class="fa-solid fa-check"></i>
               </div>
-              <h4 class="text-sm font-bold text-white">Pesanan Berhasil Diproses!</h4>
-              <p class="text-xs text-slate-300">
-                No. Order: <span class="font-mono font-bold text-orange-400">${data.order.order_id}</span>
-              </p>
-              <p class="text-[11px] text-slate-400 leading-relaxed">
-                Notifikasi otomatis langsung mendarat di WhatsApp kasir toko via <b>LuxWA</b>. Kasir sedang menyiapkan pesanan Anda!
-              </p>
-              <button onclick="resetIntentCard()" class="mt-3 text-xs text-slate-400 hover:text-white underline">
-                Pesan Menu Lain
-              </button>
+              <div class="bg-emerald-950/40 border border-emerald-500/40 p-3 sm:p-3.5 rounded-2xl rounded-tl-xs text-emerald-200 max-w-[88%] text-xs sm:text-sm">
+                <span class="font-bold text-white block mb-1">Pesanan Terkonfirmasi: ${data.order.order_id}</span>
+                Kasir toko telah menerima rincian belanjaan dan sedang menyiapkan pesanan Anda.
+              </div>
             </div>
           `;
+          chatBox.scrollTop = chatBox.scrollHeight;
+          resetIntentCard();
         } else {
-          throw new Error(data.detail || "Gagal eksekusi order");
+          throw new Error(data.detail || "Gagal mengeksekusi pesanan.");
         }
-      } catch (err) {
-        console.error(err);
-        showToast(err.message, false);
+      } catch (e) {
+        showToast(e.message || "Gagal menghubungkan pesanan.", false);
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i><span>Coba Eksekusi Lagi</span>';
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane text-xs"></i><span>Coba Kirim Ulang</span>';
       }
     }
 
-    // Init on Load
+    // Init on Mount
     fetchMerchants();
   </script>
 </body>

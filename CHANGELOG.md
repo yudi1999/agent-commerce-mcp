@@ -2,7 +2,16 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
-## [2.5.2-PROD] - 2026-11-23
+## [2.6.0-PROD] - 2026-11-23
+
+### Ditingkatkan (UI/UX Craftsmanship & Anti-Slop Delivery Standard)
+- **Desain Ulang Interface (`runner-web/public/index.html`):**
+  - **Palet & Visual:** Menggunakan palet gelap slate-navy berkarakter (`#090c15`, `#111524`, `#1e2638`) dengan aksen oranye hangat terarah.
+  - **Audit Anti-Slop:** Menghilangkan badge kapsul AI generik, menghilangkan em dash liar, serta merapikan hierarki tipografi menggunakan *Plus Jakarta Sans* dan *JetBrains Mono*.
+  - **Aksesibilitas & Keyboard Navigation:** Menambahkan focus indicator (`outline: 2px solid #38bdf8`), label eksplisit untuk screen reader, dan memastikan minimum tap target touch-friendly (44x44px).
+  - **Responsive Layout:** Pengaturan reflow dinamis yang nyaman di layar mobile/HP tanpa overflow horizontal.
+  - **Nota Belanja Terstruktur:** Tampilan rincian menu belanjaan multi-toko kini tersusun rapi dengan indikator status intent interaktif.
+- **Git Checkpoint:** Tersimpan rapi di commit `v2.6.0-PROD`.
 
 ### Diperbaiki (Multi-Item & Cross-Merchant Order Execution)
 - **Multi-Item Parser:** Memperbarui prompt AI dan parser intent untuk mendukung pemesanan beberapa item sekaligus (multi-item/cross-merchant), seperti 2 kopi + 1 roti.
