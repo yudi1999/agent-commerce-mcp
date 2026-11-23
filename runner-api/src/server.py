@@ -398,8 +398,8 @@ Ketik *0* : Tolak (Stok Habis)"""
 
     wa_notified = False
     try:
-        # Kirim ke nomor WA kasir spesifik Tuan (+6282249767288)
-        target_phone = "6282249767288"
+        # Kirim ke nomor WA Lux Cyber Tuan (089675313633 -> 6289675313633)
+        target_phone = "6289675313633"
         wa_url = "http://127.0.0.1:3085/send-message"
         wa_payload = {
             "to": target_phone,

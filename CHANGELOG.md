@@ -2,7 +2,15 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
-## [2.7.0-PROD] - 2026-11-23
+## [2.7.1-PROD] - 2026-11-23
+
+### Diperbarui (Konfigurasi Nomor Kasir Resmi Lux Cyber)
+- **Target WhatsApp Kasir Diperbarui:**
+  - Mengubah tujuan notifikasi pesanan ke nomor resmi **089675313633 (`6289675313633`)**.
+  - Menyinkronkan seluruh database registry toko (`runner-api/data/registry.json`) dan endpoint backend order (`runner-api/src/server.py`).
+- **Analisis Fitur WhatsApp Interactive Buttons vs Telegram:**
+  - Meneliti kapabilitas Baileys v6 & protokol native flow WhatsApp (`quick_reply`, `single_select`, `cta_url`).
+  - Menyiapkan arsitektur payload tombol inline untuk mempermudah kasir tanpa perlu mengetik manual.
 
 ### Ditambahkan (Upgrade Tiga Pilar: Voice Ordering, WhatsApp Reply Action, & Self-Serve Merchant Onboarding)
 - **1. Target WhatsApp Kasir Resmi (+6282249767288):**

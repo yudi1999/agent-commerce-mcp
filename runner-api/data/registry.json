@@ -7,7 +7,7 @@
       "location": "Karawang, Jawa Barat",
       "mcp_url": "https://social.luxcyber.my.id/kedai-kopi/mcp.json",
       "api_order_url": "https://social.luxcyber.my.id/kedai-kopi/api/order",
-      "wa_number": "6282249767288",
+      "wa_number": "6289675313633",
       "catalog": [
         { "id": "KOPI-01", "name": "Kopi Susu Gula Aren", "price": 18000, "stock": 50, "desc": "Espresso blend susu segar dan aren murni" },
         { "id": "KOPI-02", "name": "Americano Ice Blend", "price": 15000, "stock": 35, "desc": "Kopi hitam dingin segar double shot" },
@@ -21,7 +21,7 @@
       "location": "Karawang Barat",
       "mcp_url": "https://social.luxcyber.my.id/kedai-kopi/mcp.json",
       "api_order_url": "https://social.luxcyber.my.id/kedai-kopi/api/order",
-      "wa_number": "6282249767288",
+      "wa_number": "6289675313633",
       "catalog": [
         { "id": "ROTI-02", "name": "Roti Sisir Mentega Spesial", "price": 12000, "stock": 30, "desc": "Roti lembut olesan butter premium" },
         { "id": "PASTRY-01", "name": "Croissant Butter Flaky", "price": 22000, "stock": 15, "desc": "Pastry renyah wangi butter Prancis" }
