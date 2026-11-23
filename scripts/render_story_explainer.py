@@ -95,7 +95,7 @@ def render_frame(frame_idx):
         num_bars = 18
         for b in range(num_bars):
             bx = wave_cx - (num_bars * 16) + (b * 32)
-            wave_h = int(25 + 55 * math.sin(t_sec * 8.0 + b * 0.45) * math.cos(t_sec * 4.0))
+            wave_h = max(10, int(abs(25 + 55 * math.sin(t_sec * 8.0 + b * 0.45) * math.cos(t_sec * 4.0))))
             draw.rounded_rectangle([bx - 6, wave_cy - wave_h, bx + 6, wave_cy + wave_h], radius=6, fill=ACCENT_BLUE)
 
         draw.text((WIDTH // 2, phone_y + 390), "🎙️ Asisten AI Mendengarkan...", font=FONT_BADGE, fill=TEXT_MUTED, anchor="mm")
