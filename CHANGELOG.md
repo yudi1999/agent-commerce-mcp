@@ -2,7 +2,22 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
-## [2.0.0-PROD] - 2026-11-23
+## [2.1.0-PROD] - 2026-11-23
+
+### Diperbaiki (Animasi Karakter SVG Hidup & Sinkronisasi Audio Presisi)
+- **Animasi Karakter Orang Bergerak (`scripts/generate_html_scene_v3.py`):**
+  - Karakter vektor modern (Plus Jakarta style) dengan animasi kepala mengangguk (*head bobbing*), mulut berbicara sinkron narasi Puck, lengan memegang smartphone dengan denyut radiasi audio ke AI.
+  - Menghilangkan kesan monoton/statis.
+- **Sinkronisasi Presisi 6 Babak Audio (`assets/audio/vo_storytelling.mp3`):**
+  - **0.0 - 5.5s:** "Pernah sadar gak? Orang makin malas buka banyak aplikasi..." (Karakter orang bercerita + Headline fenomena baru).
+  - **5.5 - 10.5s:** "Tinggal bilang ke asisten AI: Pesanin kopi susu ke rumah..." (Karakter berbicara ke HP + Equalizer suara AI merespons).
+  - **10.5 - 14.0s:** "Tapi masalahnya: AI itu buta! Gak bisa klik banner atau web ribet..." (Browser error crash, popup banner memblokir AI).
+  - **14.0 - 21.0s:** "Di sinilah protokol MCP bekerja, menghubungkan toko Anda langsung ke otak AI..." (Diagram Toko <-> MCP <-> Otak AI + 3 poin alur).
+  - **21.0 - 25.5s:** "Orderan langsung loncat ke WhatsApp kasir, tanpa potongan komisi 20%..." (Card WA Kasir + Stempel merah POTONGAN KOMISI: 0%).
+  - **25.5 - 30.0s:** "Mau toko Anda dipasangin terima beres? Cukup DM / PC sekarang juga!" (Karakter tersenyum + Tombol oranye DM/PC Sekarang).
+- **Zero VPS Load:** Offload ke runner GitHub Actions dengan browser Chromium asli.
+ 
+ ## [2.0.0-PROD] - 2026-11-23
 
 ### Dirombak Total (HTML/CSS Browser-Engine Renderer)
 - **Migrasi Penuh ke Headless Chromium (Playwright):**

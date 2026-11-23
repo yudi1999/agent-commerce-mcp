@@ -7,6 +7,8 @@ import os
 import sys
 import subprocess
 from playwright.sync_api import sync_playwright
+sys.path.append(os.path.dirname(__file__))
+from generate_html_scene_v3 import get_html_for_time
 
 WIDTH = 1080
 HEIGHT = 1920
