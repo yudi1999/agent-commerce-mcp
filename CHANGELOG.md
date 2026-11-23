@@ -2,6 +2,15 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
+## [1.4.0-PROD] - 2026-11-23
+
+### Ditambahkan
+- **Engine Masterpiece Motion Design v2 (`scripts/render_voice_masterpiece.py`):**
+  - Mengintegrasikan suara studio natural non-robot (Gemini Speech Broadcast Voice `Puck` dengan post-processing compand & atempo tebal).
+  - Call-to-Action disesuaikan: Menghapus nomor kontak WhatsApp, digantikan ajakan organik **`📩 Cukup DM / PC Sekarang`**.
+  - Durasi presisi 22.0 detik sinkron dengan audio narasi studio.
+  - Kompilasi dan perenderan di-offload ke cloud runner GitHub Actions (0% beban VPS).
+ 
 ## [1.3.0-PROD] - 2026-11-23
 
 ### Ditambahkan
