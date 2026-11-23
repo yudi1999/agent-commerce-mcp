@@ -2,6 +2,15 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
+## [2.5.1-PROD] - 2026-11-23
+
+### Diperbaiki (9Router SSE Stream & Auth Parsing)
+- **Root Cause Fix:** Memperbaiki parsing upstream 9Router yang mem-force response SSE chunks (`data: {...}`) saat model `ag/gemini-3.8-flash-medium` dipanggil via HTTP.
+- **Auto DB Auth Key Extraction:** Menghubungkan query SQLite dinamis ke `~/.9router/db/data.sqlite` untuk mengambil Bearer key aktif, meniadakan error 401 Unauthorized.
+- **Live Test Verified:**
+  - `POST /api/chat-assistant` sukses membalas: *"Siap, pesanan 2 Kopi Susu Gula Aren dari Kedai Kopi Nusantara untuk diantar ke Meja Kerja Laptop sudah dicatat. Totalnya Rp 36.000."*
+  - Payload intent ter-generate otomatis dan siap dieksekusi.
+
 ## [2.5.0-PROD] - 2026-11-23
 
 ### Ditambahkan (Production Open Web Runner & Hardened MCP Hub)

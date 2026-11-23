@@ -157,19 +157,57 @@ INSTRUKSI FORMAT JAWABAN:
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": clean_msg}
         ],
-        "temperature": 0.3
+        "temperature": 0.3,
+        "stream": False
     }
     
     reply_text = "Maaf, asisten sedang sibuk. Silakan pilih menu langsung dari daftar di bawah."
     try:
+        # Load active 9Router API key from DB
+        auth_key = ""
+        try:
+            import sqlite3
+            with sqlite3.connect("/home/ubuntu/.9router/db/data.sqlite") as db:
+                c = db.cursor()
+                c.execute("SELECT key FROM apiKeys WHERE isActive=1 ORDER BY id DESC LIMIT 1")
+                row = c.fetchone()
+                if row:
+                    auth_key = row[0]
+        except Exception:
+            pass
+
+        headers = {"Content-Type": "application/json"}
+        if auth_key:
+            headers["Authorization"] = f"Bearer {auth_key}"
+
         req = urllib.request.Request(
             url,
             data=json.dumps(req_body).encode("utf-8"),
-            headers={"Content-Type": "application/json"}
+            headers=headers
         )
         with urllib.request.urlopen(req, timeout=15) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-            reply_text = data["choices"][0]["message"]["content"]
+            raw_body = resp.read().decode("utf-8")
+            # Parse both JSON or SSE lines (if 9router forces stream)
+            if raw_body.startswith("data:"):
+                # SSE response
+                collected = []
+                for line in raw_body.splitlines():
+                    line = line.strip()
+                    if line.startswith("data:") and not line.endswith("[DONE]"):
+                        data_part = line[5:].strip()
+                        if data_part:
+                            try:
+                                chunk = json.loads(data_part)
+                                delta = chunk.get("choices", [{}])[0].get("delta", {})
+                                if "content" in delta and delta["content"]:
+                                    collected.append(delta["content"])
+                            except Exception:
+                                pass
+                if collected:
+                    reply_text = "".join(collected)
+            else:
+                data = json.loads(raw_body)
+                reply_text = data["choices"][0]["message"]["content"]
     except Exception as e:
         logging.error(f"[AI-ERROR] 9Router call failed: {e}")
         # Fallback local regex parsing
