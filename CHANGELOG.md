@@ -2,6 +2,22 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
+## [1.6.0-PROD] - 2026-11-23
+
+### Ditambahkan
+- **Engine Motion Explainer 100% Persis Arsitektur `@benergak_v1` (`scripts/render_benergak_authentic.py`):**
+  - Menerapkan tata letak 3-Tier identik:
+    1. **Top Tier:** Headline tebal berwibawa di kiri atas + badge kategori topik oranye (`● POLA KONSUMEN`, `● KEBUNTUAN SISTEM`, `● SOLUSI PROTOKOL`, `● HASIL OPERASIONAL`).
+    2. **Middle Tier (Objek & Subjek Riil):**
+       - Ilustrasi line-art karakter minimalis memegang ponsel dengan gelombang sinyal audio terpancar.
+       - Mockup browser toko konvensional gagal: popup iklan berkedip, form alamat ruwet, captcha yang memblokir AI.
+       - Garis sirkuit titik-titik bergerak (*dotted tracking flow*) menghubungkan Toko UMKM langsung ke Otak AI melalui jembatan pipa oranye `⚡ PROTOKOL MCP ⚡`.
+       - Notifikasi WhatsApp kasir masuk nota lunas QRIS + stempel kotak merah raksasa `POTONGAN KOMISI: 0%`.
+    3. **Bottom Tier:** 3 Pill navigasi bernomor (`01 KEBIASAAN`, `02 MASALAH AI`, `03 PROTOKOL MCP`) yang menyala oranye bergantian mengikuti babak narasi.
+  - Call-to-Action bersih di akhir video: **`📩 CUKUP DM / PC SEKARANG`** (Jasa Pasang Terima Beres • Konsultasi Gratis).
+  - Voiceover studio Gemini Puck 30.0 detik pas.
+  - Kompilasi offloaded ke cloud runner GitHub Actions (0% beban VPS).
+ 
 ## [1.5.0-PROD] - 2026-11-23
 
 ### Ditambahkan
