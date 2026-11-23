@@ -90,12 +90,17 @@ class ChatRequest(BaseModel):
     customer_name: Optional[str] = "Konsumen Web"
     delivery_address: Optional[str] = "Alamat Pengiriman Default"
 
-class DirectOrderRequest(BaseModel):
-    merchant_id: str
+class OrderItem(BaseModel):
     item_id: str
-    quantity: int = Field(..., ge=1, le=20)
+    quantity: int = Field(..., ge=1, le=50)
+
+class DirectOrderRequest(BaseModel):
+    merchant_id: Optional[str] = "MERCHANT-KOPI-01"
+    item_id: Optional[str] = None
+    quantity: Optional[int] = 1
+    items: Optional[List[OrderItem]] = None
     customer_name: str = Field(..., min_length=2, max_length=100)
-    delivery_address: str = Field(..., min_length=5, max_length=200)
+    delivery_address: str = Field(..., min_length=3, max_length=200)
 
 REGISTRY_FILE = os.path.join(os.path.dirname(__file__), "../data/registry.json")
 
@@ -130,22 +135,25 @@ async def chat_assistant(payload: ChatRequest, request: Request):
     
     catalog_context = "\n".join(context_lines)
     
-    system_prompt = f"""Anda adalah Universal Shopping Assistant ramah & cerdas.
+    system_prompt = """Anda adalah Universal Shopping Assistant ramah & cerdas.
 Tugas Anda membantu pembeli memilih menu/barang dari toko UMKM lokal yang terdaftar di protokol MCP kami.
 
 Berikut katalog resmi toko yang terdaftar:
-{catalog_context}
+""" + catalog_context + """
 
 INSTRUKSI FORMAT JAWABAN:
 1. Jawab ramah dan ringkas dalam Bahasa Indonesia.
-2. Jika pembeli ingin memesan dan menyebutkan menu spesifik (misal "Pesan 2 kopi susu gula aren"), identifikasi:
-   - merchant_id (misal: "MERCHANT-KOPI-01")
-   - item_id (misal: "KOPI-01")
-   - quantity (angka)
-   - total_price
-   Lalu sertakan tag JSON order intent di paling akhir jawaban Anda dengan format:
+2. Jika pembeli ingin memesan dan menyebutkan menu spesifik (bisa 1 menu atau beberapa menu sekaligus, misal "2 kopi susu gula aren dan 1 roti sisir mentega spesial"), identifikasi seluruh item yang dipesan:
+   - Buat daftar "items" yang dipesan lengkap dengan:
+     - item_id (misal: "KOPI-01")
+     - item_name
+     - quantity (angka)
+     - price_per_item (angka)
+     - subtotal (angka)
+   - Hitung total_price dari seluruh item.
+   - Format JSON order intent wajib seperti ini:
    ```json-intent
-   {{"action": "ORDER_INTENT", "merchant_id": "...", "item_id": "...", "item_name": "...", "quantity": ..., "price_per_item": ..., "total_price": ...}}
+   {"action": "ORDER_INTENT", "merchant_id": "MERCHANT-KOPI-01", "items": [{"item_id": "KOPI-01", "item_name": "Kopi Susu Gula Aren", "quantity": 2, "price_per_item": 18000, "subtotal": 36000}, {"item_id": "ROTI-02", "item_name": "Roti Sisir Mentega Spesial", "quantity": 1, "price_per_item": 12000, "subtotal": 12000}], "total_price": 48000}
    ```
 3. Jika pembeli baru bertanya menu atau minta rekomendasi budget (misal "Gw punya budget 50rb"), hitung kombinasinya dan rekomendasikan dengan sopan. Jangan sertakan json-intent jika pembeli belum pasti mau memesan."""
 
@@ -235,35 +243,73 @@ INSTRUKSI FORMAT JAWABAN:
 async def execute_order(payload: DirectOrderRequest, request: Request):
     """
     Eksekutor Resmi: Menembak order ke Merchant MCP Endpoint & Memancarkan notifikasi LuxWA
+    Mendukung multi-item dan single-item secara cerdas.
     """
     check_rate_limit(request)
     sanitize_input_text(payload.customer_name)
     sanitize_input_text(payload.delivery_address)
     
     reg = load_registry()
-    merchant = next((m for m in reg.get("merchants", []) if m["id"] == payload.merchant_id), None)
-    if not merchant:
-        raise HTTPException(status_code=404, detail="Merchant tidak ditemukan dalam registry.")
+    all_merchants = reg.get("merchants", [])
     
-    item = next((it for it in merchant.get("catalog", []) if it["id"] == payload.item_id), None)
-    if not item:
-        raise HTTPException(status_code=404, detail="Menu / Item tidak ditemukan di toko ini.")
-    
-    if item["stock"] < payload.quantity:
-        raise HTTPException(status_code=400, detail=f"Stok tidak cukup. Sisa stok hanya {item['stock']}.")
-    
-    total_price = item["price"] * payload.quantity
+    # Kumpulkan daftar item yang dipesan
+    items_to_process = []
+    if payload.items and len(payload.items) > 0:
+        for it in payload.items:
+            items_to_process.append({"item_id": it.item_id, "quantity": it.quantity})
+    elif payload.item_id:
+        items_to_process.append({"item_id": payload.item_id, "quantity": payload.quantity or 1})
+    else:
+        raise HTTPException(status_code=400, detail="Tidak ada item yang dipesan.")
+
+    # Validasi tiap item ke katalog merchant
+    detailed_items = []
+    total_bill = 0
+    merchant_names = set()
+
+    for entry in items_to_process:
+        target_id = entry["item_id"]
+        qty = entry["quantity"]
+        
+        found = False
+        for m in all_merchants:
+            for cat_it in m.get("catalog", []):
+                if cat_it["id"] == target_id:
+                    if cat_it["stock"] < qty:
+                        raise HTTPException(status_code=400, detail=f"Stok {cat_it['name']} tidak cukup (sisa {cat_it['stock']}).")
+                    subtotal = cat_it["price"] * qty
+                    detailed_items.append({
+                        "item_id": target_id,
+                        "name": cat_it["name"],
+                        "quantity": qty,
+                        "price": cat_it["price"],
+                        "subtotal": subtotal,
+                        "merchant": m["name"]
+                    })
+                    total_bill += subtotal
+                    merchant_names.add(m["name"])
+                    found = True
+                    break
+            if found:
+                break
+        if not found:
+            raise HTTPException(status_code=404, detail=f"Item ID {target_id} tidak ditemukan di katalog merchant manapun.")
+
     order_id = f"ORD-{int(time.time())}-{uuid.uuid4().hex[:4].upper()}"
-    
-    # 1. Dispatch ke Merchant Gateway lokal / API Order
+    store_summary = ", ".join(merchant_names) if merchant_names else "Merchant Mitra"
+
+    # Format text ringkasan pesanan untuk WhatsApp
+    pesanan_lines = []
+    for d in detailed_items:
+        pesanan_lines.append(f"• {d['name']} ({d['quantity']}x) - Rp {d['subtotal']:,}")
+    pesanan_text = "\n".join(pesanan_lines)
+
+    # 1. Objek data order
     order_data = {
         "order_id": order_id,
-        "merchant_name": merchant["name"],
-        "item_id": item["id"],
-        "item_name": item["name"],
-        "quantity": payload.quantity,
-        "price_per_item": item["price"],
-        "total_price": total_price,
+        "merchants": list(merchant_names),
+        "items": detailed_items,
+        "total_price": total_bill,
         "customer_name": payload.customer_name,
         "delivery_address": payload.delivery_address,
         "status": "CONFIRMED",
@@ -272,17 +318,18 @@ async def execute_order(payload: DirectOrderRequest, request: Request):
     }
     
     # 2. Trigger Notifikasi WhatsApp Kasir via LuxWA
-    wa_message = f"""☕ *PESANAN BARU VIA OPEN WEB RUNNER!*
+    wa_message = f"""☕ *PESANAN MULTI-ITEM MASUK VIA OPEN WEB RUNNER!*
 ━━━━━━━━━━━━━━━━━━━━
-🏪 *Toko:* {merchant['name']}
+🏪 *Toko/Mitra:* {store_summary}
 📋 *No. Pesanan:* {order_id}
 👤 *Pemesan:* {payload.customer_name}
 📍 *Alamat:* {payload.delivery_address}
-🛒 *Pesanan:* {item['name']} ({payload.quantity} porsi)
-💰 *Total Tagihan:* Rp {total_price:,}
+🛒 *Rincian Pesanan:*
+{pesanan_text}
+💰 *Total Tagihan:* Rp {total_bill:,}
 💳 *Metode:* QRIS (LUNAS_AUTO)
 ━━━━━━━━━━━━━━━━━━━━
-👉 *Tindakan Kasir:* Siapkan pesanan sekarang. Pembeli memesan lewat Asisten AI."""
+👉 *Tindakan Kasir:* Siapkan seluruh pesanan sekarang. Pembeli memesan lewat Asisten AI."""
 
     wa_notified = False
     try:

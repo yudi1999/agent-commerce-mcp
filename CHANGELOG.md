@@ -2,6 +2,16 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
+## [2.5.2-PROD] - 2026-11-23
+
+### Diperbaiki (Multi-Item & Cross-Merchant Order Execution)
+- **Multi-Item Parser:** Memperbarui prompt AI dan parser intent untuk mendukung pemesanan beberapa item sekaligus (multi-item/cross-merchant), seperti 2 kopi + 1 roti.
+- **Kartu Keranjang Web Runner:** Mengubah tampilan rincian keranjang di web runner agar menampilkan rincian item, kuantiti, dan subtotal per menu secara rinci.
+- **LuxWA Payload Alignment:** Menyelaraskan field payload LuxWA (`to` bukan `phone`) dan format template pesan WA kasir multi-item.
+- **Live Verifikasi Selesai:**
+  - Order `ORD-1795444846-C397`: 2x Kopi Susu Gula Aren (Rp 36.000) + 1x Roti Sisir Mentega (Rp 12.000) = Total Rp 48.000.
+  - `whatsapp_notified: true` berhasil dikirimkan ke nomor WhatsApp kasir Tuan.
+
 ## [2.5.1-PROD] - 2026-11-23
 
 ### Diperbaiki (9Router SSE Stream & Auth Parsing)
