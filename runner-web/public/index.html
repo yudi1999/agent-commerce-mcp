@@ -146,10 +146,22 @@
       <!-- Input Form -->
       <form id="chatForm" onsubmit="handleChatSubmit(event)" class="p-2.5 sm:p-3 bg-[#0d111d] border-t border-slate-800 flex items-center gap-2">
         <label for="userInput" class="sr-only">Pesan belanja atau pertanyaan</label>
+        
+        <!-- Voice Input Button (Feature 2) -->
+        <button 
+          type="button" 
+          id="voiceBtn" 
+          onclick="toggleVoiceRecognition()" 
+          title="Pesan Lewat Suara (Voice Ordering)" 
+          class="w-11 h-11 rounded-xl bg-[#1a2238] hover:bg-[#253150] active:scale-95 border border-slate-700 text-slate-300 hover:text-orange-400 flex items-center justify-center transition flex-shrink-0"
+        >
+          <i id="voiceIcon" class="fa-solid fa-microphone text-sm"></i>
+        </button>
+
         <input 
           type="text" 
           id="userInput" 
-          placeholder="Ketik pesanan bebas (contoh: 2 kopi susu dan 1 croissant)..." 
+          placeholder="Ketik pesanan bebas atau klik mic untuk bicara..." 
           required 
           autocomplete="off"
           class="flex-1 bg-[#151a2d] border border-slate-700/70 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder-slate-400 focus:border-orange-500 focus:bg-[#192036] transition"
@@ -199,7 +211,10 @@
             <i class="fa-solid fa-shop text-emerald-400"></i>
             Toko Resmi Terdaftar (MCP Directory)
           </h3>
-          <span class="text-[10px] text-slate-500 font-mono">v1.2 Live</span>
+          <button onclick="openRegisterModal()" class="text-[11px] bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/30 px-2 py-0.5 rounded font-semibold transition flex items-center gap-1">
+            <i class="fa-solid fa-plus text-[10px]"></i>
+            <span>Daftar Toko</span>
+          </button>
         </div>
 
         <!-- Scrollable List of Merchants -->
@@ -227,6 +242,64 @@
 
   </main>
 
+  <!-- Modal Daftarkan Toko Baru (Feature 4) -->
+  <div id="registerModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-[#111524] border border-slate-800 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div>
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-store text-orange-400"></i>
+            Daftarkan Toko UMKM ke Protokol MCP
+          </h3>
+          <p class="text-[11px] text-slate-400">Toko langsung terhubung ke asisten AI dan menerima pesanan di WhatsApp.</p>
+        </div>
+        <button onclick="closeRegisterModal()" class="text-slate-400 hover:text-white text-sm">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="regStoreForm" onsubmit="handleRegisterStoreSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Nama Toko / Brand:</label>
+          <input type="text" id="regStoreName" required placeholder="Contoh: Kedai Kopi Kenangan" class="w-full bg-[#151a2d] border border-slate-700 rounded-lg px-3 py-2 text-white placeholder-slate-500 focus:border-orange-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Kategori Usaha:</label>
+            <input type="text" id="regStoreCategory" required placeholder="F&B / Kuliner / Jasa" class="w-full bg-[#151a2d] border border-slate-700 rounded-lg px-3 py-2 text-white placeholder-slate-500 focus:border-orange-500">
+          </div>
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Kota / Lokasi:</label>
+            <input type="text" id="regStoreLocation" required placeholder="Karawang Barat" class="w-full bg-[#151a2d] border border-slate-700 rounded-lg px-3 py-2 text-white placeholder-slate-500 focus:border-orange-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Nomor WhatsApp Kasir Toko:</label>
+          <input type="text" id="regStoreWa" required value="082249767288" placeholder="Contoh: 082249767288" class="w-full bg-[#151a2d] border border-slate-700 rounded-lg px-3 py-2 text-white placeholder-slate-500 focus:border-orange-500 font-mono">
+          <p class="text-[10px] text-slate-500 mt-0.5">Nota pesanan AI akan dikirim langsung ke nomor WhatsApp ini.</p>
+        </div>
+
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Katalog Menu Awal (Format: Nama Menu - Harga):</label>
+          <textarea id="regStoreCatalog" required rows="3" placeholder="Es Teh Manis Jumbo - 6000&#10;Nasi Goreng Spesial - 18000&#10;Ayam Geprek Sambal Bawang - 20000" class="w-full bg-[#151a2d] border border-slate-700 rounded-lg px-3 py-2 text-white placeholder-slate-500 focus:border-orange-500 font-mono"></textarea>
+          <p class="text-[10px] text-slate-500 mt-0.5">Tulis 1 menu per baris dengan format: Nama Menu - Harga.</p>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeRegisterModal()" class="px-3.5 py-2 rounded-xl text-slate-400 hover:text-white bg-slate-800">
+            Batal
+          </button>
+          <button type="submit" id="regSubmitBtn" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 py-2 rounded-xl shadow-md transition flex items-center gap-1.5">
+            <i class="fa-solid fa-cloud-arrow-up text-xs"></i>
+            <span>Daftarkan Sekarang</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Notification Toast Area -->
   <div id="toast" role="status" aria-live="polite" class="fixed bottom-5 right-5 max-w-sm bg-[#161c2e] border border-slate-700 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transform translate-y-24 opacity-0 transition duration-300 z-50 text-xs sm:text-sm">
     <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
@@ -238,6 +311,137 @@
     const API_BASE = "https://social.luxcyber.my.id/agent-runner/api";
     let activeMerchants = [];
     let currentIntent = null;
+    let recognition = null;
+    let isListening = false;
+
+    // Feature 2: Voice Recognition (Web Speech API)
+    function setupVoiceRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        console.warn("Browser tidak mendukung Web Speech API.");
+        return;
+      }
+      recognition = new SpeechRecognition();
+      recognition.lang = "id-ID";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        isListening = true;
+        const btn = document.getElementById('voiceBtn');
+        const icon = document.getElementById('voiceIcon');
+        btn.classList.add('bg-orange-500/20', 'border-orange-500', 'text-orange-400', 'animate-pulse');
+        icon.className = "fa-solid fa-microphone-lines text-sm";
+        showToast("Mendengarkan suara... Silakan bicara pesanan Anda!");
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('userInput').value = transcript;
+        showToast(`Suara terdeteksi: "${transcript}"`);
+        handleChatSubmit(new Event('submit'));
+      };
+
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+        showToast("Gagal menangkap suara: " + event.error, false);
+      };
+
+      recognition.onend = () => {
+        isListening = false;
+        const btn = document.getElementById('voiceBtn');
+        const icon = document.getElementById('voiceIcon');
+        btn.classList.remove('bg-orange-500/20', 'border-orange-500', 'text-orange-400', 'animate-pulse');
+        icon.className = "fa-solid fa-microphone text-sm";
+      };
+    }
+
+    function toggleVoiceRecognition() {
+      if (!recognition) {
+        setupVoiceRecognition();
+      }
+      if (!recognition) {
+        showToast("Fitur suara memerlukan Chrome/Safari modern.", false);
+        return;
+      }
+      if (isListening) {
+        recognition.stop();
+      } else {
+        try {
+          recognition.start();
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+
+    // Feature 4: Modal Register Store Logic
+    function openRegisterModal() {
+      document.getElementById('registerModal').classList.remove('hidden');
+    }
+
+    function closeRegisterModal() {
+      document.getElementById('registerModal').classList.add('hidden');
+    }
+
+    async function handleRegisterStoreSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('regStoreName').value.trim();
+      const cat = document.getElementById('regStoreCategory').value.trim();
+      const loc = document.getElementById('regStoreLocation').value.trim();
+      const wa = document.getElementById('regStoreWa').value.trim();
+      const catalogRaw = document.getElementById('regStoreCatalog').value.trim();
+
+      // Parse lines
+      const catalog = [];
+      catalogRaw.split('\n').forEach(line => {
+        line = line.trim();
+        if (line && line.includes('-')) {
+          const parts = line.split('-');
+          const itemName = parts[0].trim();
+          const itemPrice = parseInt(parts[1].replace(/[^0-9]/g, '')) || 10000;
+          catalog.push({ name: itemName, price: itemPrice, stock: 50 });
+        }
+      });
+
+      if (!catalog.length) {
+        showToast("Tulis minimal 1 menu dengan format: Nama Menu - Harga", false);
+        return;
+      }
+
+      const btn = document.getElementById('regSubmitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mendaftarkan...';
+
+      try {
+        const res = await fetch(`${API_BASE}/merchants/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: name,
+            category: cat,
+            location: loc,
+            wa_number: wa,
+            catalog: catalog
+          })
+        });
+
+        const data = await res.json();
+        if (data.status === "success") {
+          showToast(`Toko ${name} berhasil didaftarkan ke MCP!`);
+          closeRegisterModal();
+          document.getElementById('regStoreForm').reset();
+          fetchMerchants();
+        } else {
+          throw new Error(data.detail || "Gagal mendaftarkan toko");
+        }
+      } catch (err) {
+        showToast(err.message, false);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up text-xs"></i> <span>Daftarkan Sekarang</span>';
+      }
+    }
 
     // Load active registered merchants
     async function fetchMerchants() {

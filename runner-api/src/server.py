@@ -102,6 +102,13 @@ class DirectOrderRequest(BaseModel):
     customer_name: str = Field(..., min_length=2, max_length=100)
     delivery_address: str = Field(..., min_length=3, max_length=200)
 
+class RegisterMerchantRequest(BaseModel):
+    name: str = Field(..., min_length=3, max_length=60)
+    category: str = Field(..., min_length=3, max_length=50)
+    location: str = Field(..., min_length=3, max_length=80)
+    wa_number: str = Field(..., min_length=10, max_length=20)
+    catalog: List[dict] = Field(...)
+
 REGISTRY_FILE = os.path.join(os.path.dirname(__file__), "../data/registry.json")
 
 def load_registry():
@@ -109,6 +116,59 @@ def load_registry():
         with open(REGISTRY_FILE, "r") as f:
             return json.load(f)
     return {"merchants": []}
+
+def save_registry(data):
+    with open(REGISTRY_FILE, "w") as f:
+        json.dump(data, f, indent=2)
+
+@app.post("/api/merchants/register")
+def register_merchant(payload: RegisterMerchantRequest, request: Request):
+    check_rate_limit(request)
+    name = sanitize_input_text(payload.name)
+    category = sanitize_input_text(payload.category)
+    location = sanitize_input_text(payload.location)
+    
+    # Normalisasi nomor WA
+    raw_wa = re.sub(r"[^0-9]", "", payload.wa_number)
+    if raw_wa.startswith("08"):
+        raw_wa = "628" + raw_wa[2:]
+    elif not raw_wa.startswith("62"):
+        raw_wa = "62" + raw_wa
+
+    merchant_id = f"MERCHANT-{uuid.uuid4().hex[:6].upper()}"
+    
+    # Format katalog
+    formatted_catalog = []
+    for idx, c in enumerate(payload.catalog):
+        item_id = f"ITEM-{idx+1:02d}"
+        formatted_catalog.append({
+            "id": item_id,
+            "name": sanitize_input_text(c.get("name", f"Menu {idx+1}")),
+            "price": int(c.get("price", 10000)),
+            "stock": int(c.get("stock", 50)),
+            "desc": sanitize_input_text(c.get("desc", "Menu pilihan segar dan lezat"))
+        })
+        
+    new_merchant = {
+        "id": merchant_id,
+        "name": name,
+        "category": category,
+        "location": location,
+        "wa_number": raw_wa,
+        "mcp_url": f"https://social.luxcyber.my.id/agent-runner/mcp/{merchant_id}.json",
+        "api_order_url": "https://social.luxcyber.my.id/agent-runner/api/execute-order",
+        "catalog": formatted_catalog
+    }
+    
+    reg = load_registry()
+    reg.setdefault("merchants", []).append(new_merchant)
+    save_registry(reg)
+    
+    return {
+        "status": "success",
+        "message": f"Toko '{name}' berhasil terdaftar di Protokol MCP!",
+        "merchant": new_merchant
+    }
 
 @app.get("/api/merchants")
 def list_merchants(request: Request):
@@ -318,24 +378,31 @@ async def execute_order(payload: DirectOrderRequest, request: Request):
     }
     
     # 2. Trigger Notifikasi WhatsApp Kasir via LuxWA
-    wa_message = f"""☕ *PESANAN MULTI-ITEM MASUK VIA OPEN WEB RUNNER!*
+    wa_message = f"""🛒 *PESANAN MULTI-ITEM MASUK VIA OPEN WEB RUNNER!*
 ━━━━━━━━━━━━━━━━━━━━
 🏪 *Toko/Mitra:* {store_summary}
 📋 *No. Pesanan:* {order_id}
 👤 *Pemesan:* {payload.customer_name}
 📍 *Alamat:* {payload.delivery_address}
+
 🛒 *Rincian Pesanan:*
 {pesanan_text}
+
 💰 *Total Tagihan:* Rp {total_bill:,}
 💳 *Metode:* QRIS (LUNAS_AUTO)
 ━━━━━━━━━━━━━━━━━━━━
-👉 *Tindakan Kasir:* Siapkan seluruh pesanan sekarang. Pembeli memesan lewat Asisten AI."""
+👉 *Konfirmasi Kasir (Balas Cepat):*
+Ketik *1* : Terima & Sedang Disiapkan
+Ketik *2* : Pesanan Selesai / Sedang Diantar
+Ketik *0* : Tolak (Stok Habis)"""
 
     wa_notified = False
     try:
+        # Kirim ke nomor WA kasir spesifik Tuan (+6282249767288)
+        target_phone = "6282249767288"
         wa_url = "http://127.0.0.1:3085/send-message"
         wa_payload = {
-            "to": "6289623829690",
+            "to": target_phone,
             "message": wa_message
         }
         wa_req = urllib.request.Request(

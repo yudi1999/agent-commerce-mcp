@@ -2,7 +2,21 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
-## [2.6.0-PROD] - 2026-11-23
+## [2.7.0-PROD] - 2026-11-23
+
+### Ditambahkan (Upgrade Tiga Pilar: Voice Ordering, WhatsApp Reply Action, & Self-Serve Merchant Onboarding)
+- **1. Target WhatsApp Kasir Resmi (+6282249767288):**
+  - Mengarahkan seluruh notifikasi pesanan masuk langsung ke nomor WA kasir Tuan: `6282249767288`.
+- **2. Interaksi Suara Real-Time (Voice Ordering):**
+  - Memasang tombol mikrofon terintegrasi Web Speech API (`id-ID`) di samping input chat. Pengguna kini bisa memesan langsung dengan suara tanpa mengetik.
+- **3. Format Aksi WhatsApp Balas Cepat Kasir (Two-Way Action):**
+  - Pesan notifikasi kasir kini menyertakan instruksi interaktif balas cepat:
+    - Balas `1` : Terima & Sedang Disiapkan
+    - Balas `2` : Pesanan Selesai / Sedang Diantar
+    - Balas `0` : Tolak (Stok Habis)
+- **4. Modal Self-Serve Onboarding UMKM (Daftarkan Toko):**
+  - Menambahkan form interaktif di Web Runner (`POST /api/merchants/register`) yang memungkinkan pemilik toko mendaftarkan usaha, nomor WhatsApp, dan menu awal mereka secara mandiri ke registry MCP.
+- **Git Checkpoint:** Tersimpan rapi di commit `v2.7.0-PROD`.
 
 ### Ditingkatkan (UI/UX Craftsmanship & Anti-Slop Delivery Standard)
 - **Desain Ulang Interface (`runner-web/public/index.html`):**
