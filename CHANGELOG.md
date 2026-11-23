@@ -2,6 +2,24 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
+## [2.5.0-PROD] - 2026-11-23
+
+### Ditambahkan (Production Open Web Runner & Hardened MCP Hub)
+- **Universal Open Web Runner Client (`runner-web/public/index.html`):**
+  - Antarmuka web chat responsif (Tailwind CSS + Font Plus Jakarta Sans).
+  - Tangan eksekutor bebas sandbox: Pembeli bisa chat santai dengan AI atau klik quick prompt chip, sistem otomatis mengenali intent order dan mengunci pesanan.
+  - Deployed live di https://social.luxcyber.my.id/agent-runner/
+- **Backend Hub & Security Hardening (`runner-api/src/server.py`):**
+  - Berjalan sebagai daemon PM2 terisolasi `agent-runner-hub` (port 3891).
+  - **Hardening Standar Bank & Skill `web-app-security-hardening`:**
+    1. **Anti-DDoS Sliding Window Rate Limiter:** Membatasi 20 request/menit per client IP (`cf-connecting-ip` & `x-forwarded-for` aware).
+    2. **WAF Detection & Input Sanitization:** Memblokir karakter berbahaya (XSS, SQL Injection, Path Traversal, Script Tags) dengan HTTP 403 Forbidden.
+    3. **Zero API Key Leakage:** Client browser tidak memegang kunci AI apa pun; pemrosesan intent di-proxy server-side via 9Router.
+    4. **CORS Strict Whitelist:** Menolak sembarang origin luar.
+    5. **Direct LuxWA Realtime Bridge:** Otomatis mengirimkan notifikasi ke WhatsApp kasir toko (`089623829690`) begitu order dieksekusi.
+- **Nginx Reverse Proxy Hardening (`social-hub-luxcyber.conf`):**
+  - Mapping aman `/agent-runner/` untuk static frontend dan `/agent-runner/api/` untuk reverse proxy FastAPI.
+
 ## [2.4.0-PROD] - 2026-11-23
 
 ### Ditambahkan (Arsitektur Universal Open Web MCP Runner)
