@@ -13,7 +13,7 @@ from generate_html_scene_v3 import get_html_for_time
 WIDTH = 1080
 HEIGHT = 1920
 FPS = 30
-DURATION_SEC = 30.0
+DURATION_SEC = 40.12
 TOTAL_FRAMES = int(FPS * DURATION_SEC)
 
 def main():
@@ -21,7 +21,7 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
     temp_video = os.path.join(output_dir, "temp_browser.mp4")
     final_video = os.path.join(output_dir, "mcp-browser-masterpiece.mp4")
-    voice_audio = "assets/audio/vo_storytelling.mp3"
+    voice_audio = "assets/audio/vo_storytelling_full.mp3"
 
     print(f"Starting Browser Renderer: {TOTAL_FRAMES} frames ({DURATION_SEC}s @ {FPS} FPS)...")
 
@@ -46,8 +46,8 @@ def main():
         proc = subprocess.Popen(ffmpeg_cmd, stdin=subprocess.PIPE)
         assert proc.stdin is not None
 
-        # Load HTML generator v3
-        from generate_html_scene_v3 import get_html_for_time
+        # Load HTML generator v4 (40.12s full sync)
+        from generate_html_scene_v4 import get_html_for_time
         with open("templates/base.html", "r") as f:
             base_html = f.read()
 

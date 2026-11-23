@@ -2,7 +2,26 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
-## [2.1.0-PROD] - 2026-11-23
+## [2.2.0-PROD] - 2026-11-23
+
+### Diperbaiki Total (Root Cause Suara Kepotong & Desync Selesai 100%)
+- **Akar Masalah Terbongkar:**
+  - Sebelumnya suara narasi Gemini Puck terpotong di detik 30 karena limitasi endpoint `/api/v1/tts` memotong teks di 30 detik (`max_duration_sec: 30`), sehingga kata terakhir terpotong paksa dan visual bergerak terlalu cepat membalap audio.
+- **Solusi Permanen 6 Segmen Utuh (`assets/audio/vo_storytelling_full.mp3`):**
+  - Teks narasi dipecah menjadi 6 segmen kalimat murni tanpa batas pemotongan:
+    1. Seg 1 (6.35s): *"Pernah sadar gak? Sekarang orang makin malas buka banyak aplikasi untuk belanja."*
+    2. Seg 2 (7.55s): *"Mereka tinggal bilang ke asisten AI di HP: Pesanin kopi susu dua cup langsung kirim ke rumah."*
+    3. Seg 3 (8.09s): *"Tapi masalahnya: AI itu buta! AI gak bisa klik banner promo atau web yang ribet."*
+    4. Seg 4 (5.94s): *"Di sinilah protokol MCP bekerja. Menghubungkan toko Anda langsung ke otak AI."*
+    5. Seg 5 (6.35s): *"Orderan langsung loncat ke WhatsApp kasir lengkap dengan QRIS, tanpa potongan komisi dua puluh persen!"*
+    6. Seg 6 (5.84s): *"Mau toko Anda dipasangin terima beres? Cukup DM atau private chat sekarang juga!"*
+  - Total durasi riil: **40.12 detik utuh** tanpa ada kata yang terpotong satu huruf pun.
+- **Karakter Orang Animasi Aktif (`scripts/generate_html_scene_v4.py`):**
+  - Karakter vektor Plus Jakarta aktif berbicara, mengangguk lembut, dan memegang HP memancarkan sinyal gelombang ke AI di Scene 1, 2, dan 6.
+  - Timeline video dikunci mati mengikuti 40.12 detik audio (1203 frame @ 30 FPS).
+- **Zero VPS Load:** Offload rendering ke GitHub Actions runner.
+ 
+ ## [2.1.0-PROD] - 2026-11-23
 
 ### Diperbaiki (Animasi Karakter SVG Hidup & Sinkronisasi Audio Presisi)
 - **Animasi Karakter Orang Bergerak (`scripts/generate_html_scene_v3.py`):**
