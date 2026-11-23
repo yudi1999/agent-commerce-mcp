@@ -1,0 +1,26 @@
+[
+  {
+    "id": "PROD-001",
+    "nama": "Kopi Susu Gula Aren",
+    "kategori": "Minuman",
+    "harga": 18000,
+    "stok": 50,
+    "deskripsi": "Espresso robusta blend susu segar dan gula aren asli."
+  },
+  {
+    "id": "PROD-002",
+    "nama": "Roti Bakar Cokelat Keju",
+    "kategori": "Makanan",
+    "harga": 16000,
+    "stok": 20,
+    "deskripsi": "Roti bakar garing isi meses premium dan keju parut melimpah."
+  },
+  {
+    "id": "PROD-003",
+    "nama": "Nasi Goreng Spesial Telur",
+    "kategori": "Makanan",
+    "harga": 22000,
+    "stok": 30,
+    "deskripsi": "Nasi goreng bumbu rempah dengan suwiran ayam dan telur ceplok."
+  }
+]

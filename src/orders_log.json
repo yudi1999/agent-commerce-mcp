@@ -1,0 +1,13 @@
+[
+  {
+    "order_id": "ORD-TEST-01",
+    "customer_name": "Tuan Yudi (via JARVIS)",
+    "customer_contact": "089623829690",
+    "delivery_address": "Jl. Kemenangan No. 99, Karawang",
+    "item_name": "Kopi Susu Gula Aren",
+    "qty": 2,
+    "total": 36000,
+    "payment_method": "QRIS",
+    "status": "SUDAH_DIBAYAR"
+  }
+]
