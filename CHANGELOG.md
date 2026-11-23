@@ -2,6 +2,19 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
+## [1.5.0-PROD] - 2026-11-23
+
+### Ditambahkan
+- **Engine Motion Explainer Sinematik ala `@benergak_v1` (`scripts/render_story_explainer.py`):**
+  - Menerapkan kurikulum lengkap `video-shotcraft` (124 shot recipes):
+    1. **Hook Audio Waveform (Detik 0–6.5s):** Ilustrasi smartphone dengan equalizer audio bergerak saat user memesan ke asisten AI.
+    2. **Visual Problem "AI Buta" (Detik 6.5–12.5s):** Browser mockup error merah yang menunjukkan AI tidak bisa klik banner promo atau form ruwet.
+    3. **Jembatan Kabel Berpendar MCP (Detik 12.5–18.5s):** Analogi visual kabel data glowing yang menghubungkan Toko UMKM langsung ke Otak AI.
+    4. **WhatsApp Kasir & Stempel Komisi 0% (Detik 18.5–24.5s):** UI bubble WhatsApp pesanan masuk + stempel merah potongan ojol 0%.
+    5. **Lockup Penutup (Detik 24.5–30.0s):** Ajakan jelas dan bersih: `📩 Cukup DM / PC Sekarang`.
+  - Menggunakan suara natural studio Gemini Puck dengan pacing storytelling 30 detik pas.
+  - Offloaded ke cloud runner GitHub Actions (0% beban VPS).
+ 
 ## [1.4.0-PROD] - 2026-11-23
 
 ### Ditambahkan

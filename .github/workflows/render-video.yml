@@ -30,11 +30,11 @@ jobs:
 
       - name: Render Video & Compile Motion Audio
         run: |
-          python scripts/render_voice_masterpiece.py
+          python scripts/render_story_explainer.py
 
       - name: Upload Video Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mcp-voice-masterpiece-video
-          path: scripts/output/mcp-voice-masterpiece.mp4
+          name: mcp-benergak-story-video
+          path: scripts/output/mcp-benergak-story.mp4
           retention-days: 7
