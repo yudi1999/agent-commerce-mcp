@@ -149,6 +149,49 @@
     font-size: 22px;
     font-weight: 600;
   }
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 25px rgba(255,107,0,0.25); }
+    50% { box-shadow: 0 0 55px rgba(255,107,0,0.6); }
+  }
+  @keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(1000%); }
+  }
+  @keyframes stampSlam {
+    0% { transform: scale(2.2) rotate(-8deg); opacity: 0; }
+    60% { transform: scale(0.95) rotate(-3deg); opacity: 1; }
+    80% { transform: scale(1.05) rotate(-2deg); }
+    100% { transform: scale(1) rotate(-3deg); opacity: 1; }
+  }
+  @keyframes popIn {
+    0% { transform: scale(0.85); opacity: 0; }
+    70% { transform: scale(1.03); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes dataFlow {
+    0% { stroke-dashoffset: 100; }
+    100% { stroke-dashoffset: 0; }
+  }
+  @keyframes glitchAlert {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-3px, 2px); }
+    40% { transform: translate(3px, -2px); }
+    60% { transform: translate(-2px, -1px); }
+    80% { transform: translate(2px, 2px); }
+  }
+  
+  .slam-in {
+    animation: stampSlam 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+  .pop-in {
+    animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .glow-active {
+    animation: pulseGlow 1.8s infinite ease-in-out;
+  }
+  .glitch-box {
+    animation: glitchAlert 0.35s infinite ease-in-out;
+  }
 </style>
 </head>
 <body>

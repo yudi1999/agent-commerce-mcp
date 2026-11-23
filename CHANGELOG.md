@@ -2,7 +2,21 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
-## [2.2.0-PROD] - 2026-11-23
+## [2.3.0-PROD] - 2026-11-23
+
+### Ditambahkan (Super Dynamic Motion Graphics Suite)
+- **Engine Motion Grafis v5 (`scripts/generate_html_scene_v5.py` & `templates/base.html`):**
+  - **Animated Talking SVG Character:** Mata berkedip tiap 3.2 detik, mulut bergerak dinamis, kepala mengangguk (*head bobbing*), dan cincin gelombang kejut energi (*shockwave energy rings*) memancar dari smartphone ke AI.
+  - **Floating App Chaos (Scene 1):** Ikon-ikon aplikasi toko jadul melayang dengan efek floating sinusoidal dan tag memori penuh (450MB, 380MB, 290MB).
+  - **Dynamic Multi-Color Audio Visualizer (Scene 2):** Bar equalizer audio 18 baris dengan lonjakan ritmis biru-hijau dan particle glow.
+  - **Cyber Glitch Alert & Error Crash (Scene 3):** Mockup browser bergetar glitching saat AI terhalang popup promo dan captcha robot.
+  - **Pulsing Energy Pipe & Neon Glow (Scene 4):** Jalur data MCP berdenyut listrik oranye dengan gradient glow.
+  - **Slam-In Stamp Effect (Scene 5):** Stempel merah `POTONGAN KOMISI: 0%` membanting layar dengan transisi scale cubic-bounce.
+  - **Pulsing Glow CTA (Scene 6):** Kartu ajakan DM/PC berdenyut oranye terang (*pulsing neon button*).
+- **Audio Tetap:** Gemini Puck 40.12 detik utuh tanpa terpotong.
+- **Zero VPS Load:** Offload rendering Chromium ke GitHub Actions runner.
+ 
+ ## [2.2.0-PROD] - 2026-11-23
 
 ### Diperbaiki Total (Root Cause Suara Kepotong & Desync Selesai 100%)
 - **Akar Masalah Terbongkar:**
