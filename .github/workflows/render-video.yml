@@ -19,22 +19,23 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install FFmpeg & Fonts
+      - name: Install System Dependencies & Fonts
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core fonts-liberation
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-dejavu fonts-liberation
 
-      - name: Install Python Dependencies
+      - name: Install Python Dependencies & Playwright
         run: |
-          pip install Pillow
+          pip install Pillow playwright
+          playwright install --with-deps chromium
 
       - name: Render Video & Compile Motion Audio
         run: |
-          python scripts/render_benergak_authentic.py
+          python scripts/render_browser_video.py
 
       - name: Upload Video Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mcp-benergak-authentic-video
-          path: scripts/output/mcp-benergak-authentic.mp4
+          name: mcp-browser-masterpiece-video
+          path: scripts/output/mcp-browser-masterpiece.mp4
           retention-days: 7

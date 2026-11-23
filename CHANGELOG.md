@@ -2,6 +2,21 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
+## [2.0.0-PROD] - 2026-11-23
+
+### Dirombak Total (HTML/CSS Browser-Engine Renderer)
+- **Migrasi Penuh ke Headless Chromium (Playwright):**
+  - Menghentikan 100% cara menggambar manual via PIL/sketsa garis primitif.
+  - Menggunakan engine layout web modern (`templates/base.html` & `scripts/generate_html_scene.py`):
+    - Font profesional: **Plus Jakarta Sans** (tebal, bersih, internasional) & **JetBrains Mono**.
+    - Grid background gelap bertekstur modern (`#0c0d12` dengan grid halus 60px).
+    - Komponen UI Card presisi tinggi dengan border halus dan bayangan alami.
+    - Headline dinamis 64px dengan teks highlight kontras tinggi.
+    - Status audio waveform dinamis, mockup browser error SVG, diagram alur MCP terstandarisasi, dan bubble WhatsApp Kasir resmi.
+    - 3 Pill navigasi bawah bernomor (`01 KEBIASAAN`, `02 MASALAH AI`, `03 PROTOKOL MCP`) yang menyala oranye persis `@benergak_v1`.
+  - Suara tetap menggunakan Gemini Puck 30.0 detik pas.
+  - Kompilasi otomatis di cloud runner GitHub Actions (0% beban VPS).
+ 
 ## [1.6.0-PROD] - 2026-11-23
 
 ### Ditambahkan
