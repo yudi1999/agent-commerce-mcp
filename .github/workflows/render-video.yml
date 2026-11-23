@@ -1,0 +1,40 @@
+name: Render Authentic Demo Video
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/**'
+      - '.github/workflows/render-video.yml'
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install FFmpeg & Fonts
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core fonts-liberation
+
+      - name: Install Python Dependencies
+        run: |
+          pip install Pillow
+
+      - name: Render Video & Compile Motion Audio
+        run: |
+          python scripts/render_video.py
+
+      - name: Upload Video Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-commerce-mcp-demo
+          path: scripts/output/agent-commerce-mcp-demo.mp4
+          retention-days: 7
