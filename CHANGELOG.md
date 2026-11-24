@@ -2,6 +2,15 @@
 
 Semua perubahan dan evolusi project didokumentasikan di sini.
 
+## [2.7.2-PROD] - 2026-11-23
+
+### Checkpoint Handoff (Project Stash / Freeze State)
+- **Zero-Amnesia Protocol Execution:**
+  - Memperbarui `PROGRESS.md` dengan status lengkap seluruh layer (Runner Web, Hub API, Kedai Kopi MCP, LuxWA).
+  - Mengunci seluruh perubahan di Git commit dan push ke remote origin (`master`).
+  - Menyimpan status checkpoint: Target WA Kasir resmi `089675313633`, arsitektur multi-tenant, voice ordering, dan opsi tombol WhatsApp.
+  - Seluruh service PM2 (`agent-runner-hub`, `kedai-kopi-mcp`) dibiarkan berjalan stabil di background dengan konsumsi resource rendah (RAM <15MB total).
+
 ## [2.7.1-PROD] - 2026-11-23
 
 ### Diperbarui (Konfigurasi Nomor Kasir Resmi Lux Cyber)
